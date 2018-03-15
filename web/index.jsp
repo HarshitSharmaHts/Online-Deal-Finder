@@ -319,6 +319,9 @@ if(!flag) {
 <% } else{
     Document userDetails = Document.parse(valuecookie);
     String user_name = userDetails.getString(C.FIELD.NAME);
+    String editProfile = (String)request.getParameter("editProfile");
+    if(editProfile==null)
+        editProfile = "";
 %>
 
 <!-- Navigation -->
@@ -360,7 +363,7 @@ if(!flag) {
 						    <span class="sr-only">Toggle Dropdown</span>
 					  </button>
 					  <div class="dropdown-menu">
-						    <a class="dropdown-item" href="#">Your Profile</a>
+						    <a class="dropdown-item" href="/index.jsp?editProfile=true">Your Profile</a>
 						    <a class="dropdown-item" href="#">Your History</a>
 							<form action="logout">
 								<button class="btn btn-link" type="submit" name="submit">Logout</button>
@@ -372,6 +375,8 @@ if(!flag) {
         </div>
     </div>
 </nav>
+
+<%if(!editProfile.equals("true")){%>
     <!-- Page Content -->
 <header>
         <div id="carouselExampleIndicators" class="carousel slide my-4" style="height:50vh;" data-ride="carousel">
@@ -402,6 +407,8 @@ if(!flag) {
           </div>
      </header>
 <%--<%=valuecookie%>--%>
+
+
     <div class="container">
 
       <div class="row">
@@ -530,7 +537,85 @@ if(!flag) {
     </div>
     <!-- /.container -->
 
-<% } %>
+    <%} else {%>
+<div class="container" style="margin-top: 70px;">
+    <h1></h1>
+    <hr>
+
+    <div class="alert alert-info alert-dismissable">
+        <a class="panel-close close" data-dismiss="alert">×</a>
+        <i class="fa fa-coffee"></i>
+        This is an <strong>.alert</strong>. Use this to show important messages to the user.
+    </div>
+    <h3>Personal info</h3>
+
+    <form action="/editprofile" method="GET" class="form-horizontal" role="form">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-3 card">
+                <div class="card-body">
+                    <div class="text-center">
+                        <img src="<%=userDetails.getString(C.FIELD.IMGURL)%>" class="avatar img-circle" style="width:100px;height:100px;border-radius: 50%;" alt="avatar">
+                        <h6>Upload a different photo...</h6>
+
+                        <input type="file" name="image" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <!-- edit form column -->
+            <div class="col-md-9 personal-info">
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Name:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" name="name" type="text" value="<%=userDetails.getString(C.FIELD.NAME)%>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Email:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" name="email" value="<%=userDetails.getString(C.FIELD.EMAIL)%>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">Mobile No:</label>
+                    <div class="col-lg-8">
+                        <input class="form-control" type="text" name="phn" value="<%=userDetails.getString(C.FIELD.PHONE)%>">
+                    </div>
+                </div>
+                <%--<div class="form-group">--%>
+                    <%--<label class="col-md-3 control-label">Username:</label>--%>
+                    <%--<div class="col-md-8">--%>
+                        <%--<input class="form-control" type="text" value="janeuser">--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">New Password:</label>
+                    <div class="col-md-8">
+                        <input class="form-control" name="password" type="password" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Confirm password:</label>
+                    <div class="col-md-8">
+                        <input class="form-control" name="cpassword" type="password" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label"></label>
+                    <div class="col-md-8">
+                        <input type="submit" class="btn btn-primary" value="Save Changes">
+                        <span></span>
+                        <input type="reset" class="btn btn-default" value="Cancel">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<hr>
+<%}
+} %>
 
 <!-- Footer -->
 <footer class="py-5 bg-black">
@@ -549,8 +634,3 @@ if(!flag) {
 	</script>
 </body>
 </html>
-
-<%--
-494081324513-g902p3clof8crcbqpb9b2jn8mh0lq72k.apps.googleusercontent.com
-iFkTcV5i0Kyh8h60B5vktDQZ
---%>

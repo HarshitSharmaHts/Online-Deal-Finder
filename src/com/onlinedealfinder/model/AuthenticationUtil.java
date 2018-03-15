@@ -72,6 +72,8 @@ public class AuthenticationUtil {
 
 			if(!imgurl.equals("")) {
 				document = document.append(C.FIELD.IMGURL,imgurl);
+			} else  {
+				document = document.append(C.FIELD.IMGURL,"https://api.adorable.io/avatars/285/cool.png");
 			}
 
 			MMongo.insert(db.getCollection(),document);

@@ -44,6 +44,7 @@ public class C {
 		public static final String EMAIL = "email";
 		public static final String PASSWORD = "password";
 		public static final String IMGURL = "imgurl";
+		public static final String PHONE = "pnhno";
 	}
 	
 	public static class PASSWORD {
