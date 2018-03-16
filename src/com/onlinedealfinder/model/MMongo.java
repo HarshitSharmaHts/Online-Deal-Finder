@@ -9,7 +9,7 @@ import java.util.Iterator;
 public class MMongo {
 
     public static Iterator<Document> find(MongoCollection<Document> collection, Document document) {
-        FindIterable<Document> findIterable = collection.find(document);
+        FindIterable<Document> findIterable = collection.find(document).projection(new Document(C.FIELD.PASSWORD,0).append("_id",0));
         return findIterable.iterator();
     }
 

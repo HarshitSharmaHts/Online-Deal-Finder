@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.onlinedealfinder.model.AuthenticationUtil;
 import com.onlinedealfinder.model.C;
-import org.bson.Document;
 
 import java.io.IOException;
 

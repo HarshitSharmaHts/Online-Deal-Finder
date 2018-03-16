@@ -50,4 +50,8 @@ public class C {
 	public static class PASSWORD {
 		public static final String SALT = "MADHAv-ODF";
 	}
+
+	public static class FILE {
+		public static final  String FILE_ERROR = "file_me_error_hai";
+	}
 }

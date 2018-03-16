@@ -9,6 +9,7 @@
 <%@ page import="com.onlinedealfinder.model.C" %>
 <%@ page import="org.bson.Document" %>
 <%@ page import="javax.print.Doc" %>
+<%@ page import="java.nio.file.Paths" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -318,10 +319,20 @@ if(!flag) {
 
 <% } else{
     Document userDetails = Document.parse(valuecookie);
+
     String user_name = userDetails.getString(C.FIELD.NAME);
-    String editProfile = (String)request.getParameter("editProfile");
+    String user_email = userDetails.getString(C.FIELD.EMAIL);
+    String user_imgurl = userDetails.getString(C.FIELD.IMGURL);
+    String user_phnno = userDetails.getString(C.FIELD.PHONE);
+    String editProfile = request.getParameter("editProfile");
+
     if(editProfile==null)
         editProfile = "";
+
+    user_email = user_email == null?"":user_email;
+    user_name = user_name == null?"":user_name;
+    user_imgurl = user_imgurl == null?"":user_imgurl;
+    user_phnno = user_phnno == null?"":user_phnno;
 %>
 
 <!-- Navigation -->
@@ -537,7 +548,8 @@ if(!flag) {
     </div>
     <!-- /.container -->
 
-    <%} else {%>
+    <%} else {
+    %>
 <div class="container" style="margin-top: 70px;">
     <h1></h1>
     <hr>
@@ -548,68 +560,62 @@ if(!flag) {
         This is an <strong>.alert</strong>. Use this to show important messages to the user.
     </div>
     <h3>Personal info</h3>
-
-    <form action="/editprofile" method="GET" class="form-horizontal" role="form">
-        <div class="row">
+<%--edit profile--%>
+    <form action="/editprofile" method="GET" class="form-horizontal card" role="form">
+        <div class="row card-body">
             <!-- left column -->
-            <div class="col-md-3 card">
-                <div class="card-body">
-                    <div class="text-center">
-                        <img src="<%=userDetails.getString(C.FIELD.IMGURL)%>" class="avatar img-circle" style="width:100px;height:100px;border-radius: 50%;" alt="avatar">
-                        <h6>Upload a different photo...</h6>
+            <div class="col-md-1"></div>
+            <div class="col-md-4 card">
+                <div class="text-center card-body">
+                    <img src="<%=user_imgurl%>" class="avatar img-circle" style="width:100px;height:100px;border-radius: 50%;" alt="avatar">
+                    <h6>Upload a different photo...</h6>
 
-                        <input type="file" name="image" class="form-control">
-                    </div>
+                    <input type="file" name="image" class="form-control">
                 </div>
             </div>
 
             <!-- edit form column -->
-            <div class="col-md-9 personal-info">
+            <div class="col-md-6 personal-info">
                 <div class="form-group">
-                    <label class="col-lg-3 control-label">Name:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" name="name" type="text" value="<%=userDetails.getString(C.FIELD.NAME)%>">
+                    <label class="col-lg-6 control-label">Name:</label>
+                    <div class="col-lg-12">
+                        <input class="form-control" name="name" type="text" value="<%=user_name%>">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-lg-3 control-label">Email:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" type="text" name="email" value="<%=userDetails.getString(C.FIELD.EMAIL)%>">
+                    <label class="col-lg-6 control-label">Email:</label>
+                    <div class="col-lg-12">
+                        <input class="form-control" type="text" name="email" value="<%=user_email%>" disabled>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-lg-3 control-label">Mobile No:</label>
-                    <div class="col-lg-8">
-                        <input class="form-control" type="text" name="phn" value="<%=userDetails.getString(C.FIELD.PHONE)%>">
+                    <label class="col-lg-6 control-label">Mobile No:</label>
+                    <div class="col-lg-12">
+                        <input class="form-control" type="text" name="phn" value="<%=user_phnno%>">
                     </div>
                 </div>
-                <%--<div class="form-group">--%>
-                    <%--<label class="col-md-3 control-label">Username:</label>--%>
-                    <%--<div class="col-md-8">--%>
-                        <%--<input class="form-control" type="text" value="janeuser">--%>
-                    <%--</div>--%>
-                <%--</div>--%>
                 <div class="form-group">
-                    <label class="col-md-3 control-label">New Password:</label>
-                    <div class="col-md-8">
+                    <label class="col-md-6 control-label">New Password:</label>
+                    <div class="col-md-12">
                         <input class="form-control" name="password" type="password" value="">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-md-3 control-label">Confirm password:</label>
-                    <div class="col-md-8">
+                    <label class="col-md-6 control-label">Confirm password:</label>
+                    <div class="col-md-12">
                         <input class="form-control" name="cpassword" type="password" value="">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-md-3 control-label"></label>
-                    <div class="col-md-8">
+                    <label class="col-md-6 control-label"></label>
+                    <div class="col-md-12">
                         <input type="submit" class="btn btn-primary" value="Save Changes">
                         <span></span>
                         <input type="reset" class="btn btn-default" value="Cancel">
                     </div>
                 </div>
             </div>
+            <div class="col-md-1"></div>
         </div>
     </form>
 </div>
