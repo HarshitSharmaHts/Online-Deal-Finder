@@ -13,7 +13,8 @@ package com.onlinedealfinder.model;
 public class C {
 
 	public static class ERROR {
-		public static  final  String CODE_1 = "authentication_failed";
+		public static final  String CODE_1 = "authentication_failed";
+		public static final String USER_DOES_NOT_EXIST = "nhihai";
 	}
 
 	public static class SPLIT {
@@ -53,5 +54,10 @@ public class C {
 
 	public static class FILE {
 		public static final  String FILE_ERROR = "file_me_error_hai";
+	}
+
+	public static class IMAGE {
+		public static final String STORE_PATH = "/home/unnamed/image";
+		public static final String IMAGE_FOLDER = "image";
 	}
 }

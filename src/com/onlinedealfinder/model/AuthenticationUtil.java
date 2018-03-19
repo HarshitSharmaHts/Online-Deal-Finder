@@ -50,6 +50,15 @@ public class AuthenticationUtil {
 		return C.ERROR.CODE_1;
 	}
 
+	public static  String getDetailsByEmail(String email) {
+		Iterator<Document> iterator = MMongo.find(db.getCollection(),new Document(C.FIELD.EMAIL,email));
+
+		if(iterator.hasNext()) {
+			return iterator.next().toJson();
+		}
+		return C.ERROR.USER_DOES_NOT_EXIST;
+	}
+
 	public static String loginOAuth(String email) {
 		Document document = new Document(C.FIELD.EMAIL,email);
 		Iterator<Document> iterator = MMongo.find(db.getCollection(),document);
@@ -73,7 +82,7 @@ public class AuthenticationUtil {
 			if(!imgurl.equals("")) {
 				document = document.append(C.FIELD.IMGURL,imgurl);
 			} else  {
-				document = document.append(C.FIELD.IMGURL,"https://api.adorable.io/avatars/285/cool.png");
+				document = document.append(C.FIELD.IMGURL,"images/default.jpeg");
 			}
 
 			MMongo.insert(db.getCollection(),document);

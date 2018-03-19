@@ -13,7 +13,7 @@ import java.util.List;
 public class FileHandler {
     public static String upload(String path, HttpServletRequest request) {
         String fileName=null;
-        if(ServletFileUpload.isMultipartContent(request)){
+        if(ServletFileUpload.isMultipartContent(request)) {
             try {
                 String fname = null;
                 List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
@@ -21,15 +21,18 @@ public class FileHandler {
                     if(!item.isFormField()) {
                         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
                         fname = new File(item.getName()).getName();
-                        fileName = path + File.separator + fname +"_"+timeStamp;
-                        item.write( new File(fileName));
+                        fileName = timeStamp + "_" + fname;
+                        item.write( new File(path + File.separator+fileName));
                     }
                 }
+                System.out.println("TRY");
             } catch (Exception ex) {
+                System.out.println("CATCH");
                 return C.FILE.FILE_ERROR;
             }
-            return fileName;
+            return "images"+File.separator+fileName;
         }else{
+            System.out.println("ELSE");
             return C.FILE.FILE_ERROR;
         }
     }

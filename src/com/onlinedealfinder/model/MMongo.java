@@ -3,6 +3,7 @@ package com.onlinedealfinder.model;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.util.Iterator;
 
@@ -15,5 +16,9 @@ public class MMongo {
 
     public static void insert(MongoCollection<Document> collection, Document document) {
         collection.insertOne(document);
+    }
+
+    public static void update(MongoCollection<Document> collection, Bson filter, Document document) {
+        collection.updateMany(filter,document);
     }
 }

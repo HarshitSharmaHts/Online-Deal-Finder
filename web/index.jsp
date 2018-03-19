@@ -5,11 +5,8 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.onlinedealfinder.*" %>
 <%@ page import="com.onlinedealfinder.model.C" %>
 <%@ page import="org.bson.Document" %>
-<%@ page import="javax.print.Doc" %>
-<%@ page import="java.nio.file.Paths" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,7 +42,7 @@ if (cookies != null) {
 	for (int i = 0; i < cookies.length; i++) {
 		String namecookie = cookies[i].getName();
 		valuecookie = cookies[i].getValue();
-		if (namecookie.equals("login")) {
+		if (namecookie.equals(C.COOKIE.LOGIN_COOKIE)) {
 			cookies[i].setMaxAge(3*60*60);
 			response.addCookie(cookies[i]);	
 			flag=true;
@@ -67,7 +64,7 @@ if(!flag) {
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="#">Deal Finder</a>
+        <a class="navbar-brand" href="/OnlineDealFinder/index.jsp">Deal Finder</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                 aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -374,7 +371,7 @@ if(!flag) {
 						    <span class="sr-only">Toggle Dropdown</span>
 					  </button>
 					  <div class="dropdown-menu">
-						    <a class="dropdown-item" href="/index.jsp?editProfile=true">Your Profile</a>
+						    <a class="dropdown-item" href="index.jsp?editProfile=true">Your Profile</a>
 						    <a class="dropdown-item" href="#">Your History</a>
 							<form action="logout">
 								<button class="btn btn-link" type="submit" name="submit">Logout</button>
@@ -456,100 +453,10 @@ if(!flag) {
               </div>
             </div>
 
-            <div class="col-lg-4 col-md-6 mb-4">
-              <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-                <div class="card-body">
-                  <h4 class="card-title">
-                    <a href="#">Item Two</a>
-                  </h4>
-                  <h5>&#8377;999</h5>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur! Lorem ipsum dolor sit amet.</p>
-                </div>
-                <div class="card-footer">
-                  <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4">
-              <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-                <div class="card-body">
-                  <h4 class="card-title">
-                    <a href="#">Item Three</a>
-                  </h4>
-                  <h5>&#8377;999</h5>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-                </div>
-                <div class="card-footer">
-                  <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4">
-              <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-                <div class="card-body">
-                  <h4 class="card-title">
-                    <a href="#">Item Four</a>
-                  </h4>
-                  <h5>&#8377;999</h5>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-                </div>
-                <div class="card-footer">
-                  <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4">
-              <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-                <div class="card-body">
-                  <h4 class="card-title">
-                    <a href="#">Item Five</a>
-                  </h4>
-                  <h5>&#8377;999</h5>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur! Lorem ipsum dolor sit amet.</p>
-                </div>
-                <div class="card-footer">
-                  <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 mb-4">
-              <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
-                <div class="card-body">
-                  <h4 class="card-title">
-                    <a href="#">Item Six</a>
-                  </h4>
-                  <h5>&#8377;999</h5>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-                </div>
-                <div class="card-footer">
-                  <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
-                </div>
-              </div>
-            </div>
-
-          </div>
-          <!-- /.row -->
-
         </div>
-        <!-- /.col-lg-9 -->
-
       </div>
-      <!-- /.row -->
-
     </div>
-    <!-- /.container -->
-
-    <%} else {
-    %>
+    <%} else {%>
 <div class="container" style="margin-top: 70px;">
     <h1></h1>
     <hr>
@@ -561,31 +468,38 @@ if(!flag) {
     </div>
     <h3>Personal info</h3>
 <%--edit profile--%>
-    <form action="/editprofile" method="GET" class="form-horizontal card" role="form">
-        <div class="row card-body">
-            <!-- left column -->
-            <div class="col-md-1"></div>
-            <div class="col-md-4 card">
-                <div class="text-center card-body">
-                    <img src="<%=user_imgurl%>" class="avatar img-circle" style="width:100px;height:100px;border-radius: 50%;" alt="avatar">
-                    <h6>Upload a different photo...</h6>
+    <div class="row">
+    <form action="imageupload" method="post" class="form-horizontal col-md-4" role="form" enctype="multipart/form-data">
 
-                    <input type="file" name="image" class="form-control">
+        <div class="col-md-12 card">
+            <div class="text-center card-body">
+                <img src="<%=user_imgurl%>" class="avatar img-circle" style="width:100px;height:100px;border-radius: 50%;" alt="avatar">
+                <h6>Upload a different photo...</h6>
+
+                <div class="form-group">
+                    <label class="col-md-6 control-label"></label>
+                    <div class="col-md-12">
+                        <input type="file" name="image" class="form-control">
+                        <span></span>
+                        <input type="submit" class="btn btn-primary" value="Upload">
+                    </div>
                 </div>
             </div>
-
+        </div>
+    </form>
+    <form action="updateprofile" method="POST" class="form-horizontal card col-md-8" role="form">
             <!-- edit form column -->
-            <div class="col-md-6 personal-info">
+            <div class="col-lg-12 personal-info">
                 <div class="form-group">
                     <label class="col-lg-6 control-label">Name:</label>
                     <div class="col-lg-12">
-                        <input class="form-control" name="name" type="text" value="<%=user_name%>">
+                        <input class="form-control" name="name" type="text" value="<%=user_name%>" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-lg-6 control-label">Email:</label>
                     <div class="col-lg-12">
-                        <input class="form-control" type="text" name="email" value="<%=user_email%>" disabled>
+                        <input class="form-control" type="text" name="email"  value="<%=user_email%>"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -600,12 +514,12 @@ if(!flag) {
                         <input class="form-control" name="password" type="password" value="">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-md-6 control-label">Confirm password:</label>
-                    <div class="col-md-12">
-                        <input class="form-control" name="cpassword" type="password" value="">
-                    </div>
-                </div>
+                <%--<div class="form-group">--%>
+                    <%--<label class="col-md-6 control-label">Confirm password:</label>--%>
+                    <%--<div class="col-md-12">--%>
+                        <%--<input class="form-control" name="cpassword" type="password" value="">--%>
+                    <%--</div>--%>
+                <%--</div>--%>
                 <div class="form-group">
                     <label class="col-md-6 control-label"></label>
                     <div class="col-md-12">
@@ -615,13 +529,12 @@ if(!flag) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-1"></div>
-        </div>
     </form>
+    </div>
 </div>
 <hr>
 <%}
-} %>
+}%>
 
 <!-- Footer -->
 <footer class="py-5 bg-black">
