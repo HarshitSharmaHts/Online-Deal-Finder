@@ -17,6 +17,10 @@ public class DB {
     }
 
     public MongoCollection<Document> getCollection() {
-        return client.getDatabase(C.MONGO.DATABASE_NAME).getCollection(C.MONGO.COLLECTION_NAME);
+        return client.getDatabase(C.MONGO.DATABASE_NAME).getCollection(C.MONGO.USER_COLLECTION);
+    }
+
+    public MongoCollection<Document> getProductsCollection() {
+        return client.getDatabase(C.MONGO.DATABASE_NAME).getCollection(C.MONGO.PRODUCTS_COLLECTION);
     }
 }

@@ -25,7 +25,8 @@ public class C {
 		public static final String HOST_NAME = "localhost";
 		public static final int PORT_NUMBER = 27017;
 		public static final String DATABASE_NAME = "onlineDealFinderDatabase";
-		public static final String COLLECTION_NAME = "user_details";
+		public static final String USER_COLLECTION = "user_details";
+		public static final String PRODUCTS_COLLECTION = "products";
 	}
 	
 	public static class SESSION {
@@ -46,6 +47,10 @@ public class C {
 		public static final String PASSWORD = "password";
 		public static final String IMGURL = "imgurl";
 		public static final String PHONE = "pnhno";
+		public static final String DESCRIPTION = "description";
+		public static final String PRICE = "price";
+		public static final String TITLE = "title";
+		public static final String CATEGORY = "category";
 	}
 	
 	public static class PASSWORD {
@@ -59,5 +64,13 @@ public class C {
 	public static class IMAGE {
 		public static final String STORE_PATH = "/home/unnamed/image";
 		public static final String IMAGE_FOLDER = "image";
+	}
+
+	public static class CATEGORY {
+		public static final String ELECTRONICS =  "Electronics";
+		public static final String TVAPPLIANCES = "TV_Appliances";
+		public static final String HOMEFURNITURE = "Home_Furniture";
+		public static final String SPORTSBOOK = "Sports_Books";
+		public static final String OTHERS = "Others";
 	}
 }

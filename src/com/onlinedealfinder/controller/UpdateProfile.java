@@ -42,6 +42,7 @@ public class UpdateProfile extends HttpServlet {
 
         MMongo.update(new DB().getCollection(), Filters.eq(C.FIELD.EMAIL,email),new Document("$set",document));
 
+
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null) {

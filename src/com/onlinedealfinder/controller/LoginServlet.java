@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.onlinedealfinder.model.AuthenticationUtil;
 import com.onlinedealfinder.model.C;
-import org.bson.Document;
 
 /**
  * class used to authenticate user's login.
