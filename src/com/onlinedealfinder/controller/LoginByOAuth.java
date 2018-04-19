@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.onlinedealfinder.model.AuthenticationUtil;
 import com.onlinedealfinder.model.C;
+import org.bson.Document;
 
 import java.io.IOException;
 
@@ -37,13 +38,20 @@ public class LoginByOAuth extends HttpServlet {
 		String name = request.getParameter("u_name");
 		String email = request.getParameter("u_email");
 		String imgurl = request.getParameter("u_imgurl");
+		String longitude = request.getParameter("u_longi");
+		String latitude = request.getParameter("u_lati");
 
 		String jDocumentString = AuthenticationUtil.loginOAuth(email);
+
 
 		if(!jDocumentString.equals(C.ERROR.CODE_1)) {
 			/**
 			 * adding cookie for the user.
 			 */
+
+			Document jDoc = Document.parse(jDocumentString);
+			jDoc.append(C.COOKIE.LONGITUDE_FIELD,longitude).append(C.COOKIE.LATITUDE_FIELD,latitude);
+			jDocumentString = jDoc.toJson();
 			Cookie cookie = new Cookie(C.COOKIE.LOGIN_COOKIE, jDocumentString);
 			cookie.setMaxAge(60);
 			response.addCookie(cookie);

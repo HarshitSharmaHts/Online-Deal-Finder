@@ -40,6 +40,12 @@ public class SellItem extends HttpServlet {
         Part emailPart = request.getPart("email");
         String email = InputStreamProcessor.getString(emailPart.getInputStream());
 
+        Part longitudePart = request.getPart("longitude");
+        String longitude = InputStreamProcessor.getString(longitudePart.getInputStream());
+
+        Part latitudePart = request.getPart("latitude");
+        String latitude = InputStreamProcessor.getString(latitudePart.getInputStream());
+
         Part photoPart = request.getPart("photo");
         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date())+"_"+email+"."+photoPart.getContentType().split("/")[1];
         FileOutputStream os = new FileOutputStream (C.IMAGE.STORE_PATH +File.separator+timeStamp);
@@ -52,10 +58,14 @@ public class SellItem extends HttpServlet {
         os.close();
 
         Document document = new Document(C.FIELD.IMGURL,"images/"+timeStamp)
+                .append(C.FIELD.EMAIL,email)
                 .append(C.FIELD.TITLE,title)
                 .append(C.FIELD.PRICE,price)
                 .append(C.FIELD.CATEGORY,category)
-                .append(C.FIELD.DESCRIPTION,description);
+                .append(C.FIELD.DESCRIPTION,description)
+                .append(C.FIELD.LONGITUDE,longitude)
+                .append(C.FIELD.LATITUDE,latitude)
+                .append(C.FIELD.SOLDFLAG,"false");
 
         MMongo.insert(new DB().getProductsCollection(),document);
 

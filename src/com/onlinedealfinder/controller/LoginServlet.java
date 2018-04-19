@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.onlinedealfinder.model.AuthenticationUtil;
 import com.onlinedealfinder.model.C;
+import org.bson.Document;
 
 /**
  * class used to authenticate user's login.
@@ -28,6 +29,8 @@ public class LoginServlet extends HttpServlet {
 
 		String email = request.getParameter("form-email");
         String password = request.getParameter("form-password");
+        String longitude = request.getParameter("longitude");
+        String latitude = request.getParameter("latitude");
 
         String jAuthResp = AuthenticationUtil.login(email,password);
 
@@ -37,6 +40,10 @@ public class LoginServlet extends HttpServlet {
 			/**
 			 * adding cookie for the user.
 			 */
+
+			Document jDoc = Document.parse(jAuthResp);
+			jDoc.append(C.COOKIE.LONGITUDE_FIELD,longitude).append(C.COOKIE.LATITUDE_FIELD,latitude);
+			jAuthResp = jDoc.toJson();
 
 			Cookie cookie = new Cookie(C.COOKIE.LOGIN_COOKIE, jAuthResp);
 			cookie.setMaxAge(60);

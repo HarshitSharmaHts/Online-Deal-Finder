@@ -36,6 +36,8 @@ public class C {
 	
 	public static class COOKIE {
 		public static final String LOGIN_COOKIE = "login";
+		public static final String LONGITUDE_FIELD = "longi";
+		public static final String LATITUDE_FIELD = "lati";
 		public static final String NAME_COOKIE = "name";
 		public static final String EMAIL_COOKIE = "email";
 		public static final String IMAGE_COOKIE = "image_path";
@@ -51,6 +53,9 @@ public class C {
 		public static final String PRICE = "price";
 		public static final String TITLE = "title";
 		public static final String CATEGORY = "category";
+		public static final String LONGITUDE = "longitude";
+		public static final String LATITUDE = "latitude";
+		public static final String SOLDFLAG = "soldflag";
 	}
 	
 	public static class PASSWORD {
@@ -73,4 +78,20 @@ public class C {
 		public static final String SPORTSBOOK = "Sports_Books";
 		public static final String OTHERS = "Others";
 	}
+
+    private final static double AVERAGE_RADIUS_OF_EARTH_KM = 6371;
+    public static int calculateDistance(double userLat, double userLng,
+                                            double venueLat, double venueLng) {
+
+        double latDistance = Math.toRadians(userLat - venueLat);
+        double lngDistance = Math.toRadians(userLng - venueLng);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(userLat)) * Math.cos(Math.toRadians(venueLat))
+                * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return (int) (Math.round(AVERAGE_RADIUS_OF_EARTH_KM * c));
+    }
 }

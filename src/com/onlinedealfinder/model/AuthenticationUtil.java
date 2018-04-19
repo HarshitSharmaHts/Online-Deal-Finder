@@ -10,7 +10,7 @@ import java.util.Iterator;
 public class AuthenticationUtil {
 
 	private static DB db = new DB();
-	
+
 	public static String generateHash(String input) {
 		
 		input = C.PASSWORD.SALT + input;
