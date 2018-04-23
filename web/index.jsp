@@ -12,6 +12,7 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page import="com.mongodb.client.FindIterable" %>
 <%@ page import="javax.print.Doc" %>
+<%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,7 +70,7 @@ if(!flag) {
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="/OnlineDealFinder/index.jsp">Deal Finder</a>
+        <a class="navbar-brand" href="index.jsp">Deal Finder</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                 aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -348,17 +349,10 @@ if(!flag) {
     String user_longitude = userDetails.getString(C.COOKIE.LONGITUDE_FIELD);
     String user_latitude = userDetails.getString(C.COOKIE.LATITUDE_FIELD);
 
-    String editProfile = request.getParameter("editProfile");
-    String sellitem = request.getParameter("sellItem");
-    String history = request.getParameter("history");
+    String action = request.getParameter("action");
 
-
-    if(editProfile==null)
-        editProfile = "";
-    if(sellitem == null)
-        sellitem = "";
-    if(history == null)
-        history ="";
+    if(action == null)
+        action="";
 
     user_email = user_email == null?"":user_email;
     user_name = user_name == null?"":user_name;
@@ -369,7 +363,7 @@ if(!flag) {
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
     <div class="container">
-        <a class="navbar-brand mr-5" href="#">Deal Finder</a>
+        <a class="navbar-brand mr-5" href="index.jsp">Deal Finder</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                 aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -407,12 +401,10 @@ if(!flag) {
                                 <span class="sr-only">Toggle Dropdown</span>
                           </button>
                           <div class="dropdown-menu">
-                                <a class="dropdown-item" href="index.jsp?editProfile=true">Your Profile</a>
-                                <a class="dropdown-item" href="index.jsp?sellItem=true">Sell</a>
-                                <a class="dropdown-item" href="index.jsp?history=true">History</a>
-                                <form action="logout">
-                                    <button class="btn btn-link" type="submit" name="submit">Logout</button>
-                                </form>
+                                <a class="dropdown-item" href="index.jsp?action=edit_profile">Your Profile</a>
+                                <a class="dropdown-item" href="index.jsp?action=sell_item">Sell</a>
+                                <a class="dropdown-item" href="index.jsp?action=user_history">History</a>
+                                <a class="dropdown-item" href="logout">Logout</a>
                                 <div class="dropdown-divider"></div>
                           </div>
                     </div>
@@ -422,7 +414,7 @@ if(!flag) {
     </div>
 </nav>
 
-<%if(editProfile.equals("true")) {%>
+<%if(action.equals("edit_profile")) {%>
 
 <div class="container" style="margin-top: 70px;">
     <h1> </h1>
@@ -482,12 +474,6 @@ if(!flag) {
                     </div>
                 </div>
 
-                <%--<div class="form-group">--%>
-                <%--<label class="col-md-6 control-label">Confirm password:</label>--%>
-                <%--<div class="col-md-12">--%>
-                <%--<input class="form-control" name="cpassword" type="password" value="">--%>
-                <%--</div>--%>
-                <%--</div>--%>
 
                 <div class="form-group">
                     <label class="col-md-6 control-label"></label>
@@ -499,11 +485,10 @@ if(!flag) {
                 </div>
             </div>
         </form>
-        <%--<h1><%=user_longitude%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%=user_latitude%></h1>--%>
     </div>
 </div>
 <hr>
-    <%}else if(sellitem.equals("true")) {%>
+    <%}else if(action.equals("sell_item")) {%>
 <div class="container">
     <h1>Edit Profile</h1><hr>
     <div class="personal-info">
@@ -558,7 +543,7 @@ if(!flag) {
     </div>
 </div>
 <hr>
-<% }else if(history.equals("true")){
+<% }else if(action.equals("user_history")){
 %>
 <br><br><br><br>
 <div class="container">
@@ -567,25 +552,94 @@ if(!flag) {
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
+                    <td class="text-dark font-weight-bold">#</td>
                     <td class="text-dark font-weight-bold">Title</td>
                     <td class="text-dark font-weight-bold">Category</td>
                     <td class="text-dark font-weight-bold">Description</td>
                     <td class="text-dark font-weight-bold">Price</td>
+                    <td class="text-dark font-weight-bold">Status</td>
                 </tr>
             </thead>
             <tbody>
             <%
-                Iterator<Document> iterator = MMongo.find(new DB().getProductsCollection(),new Document(C.FIELD.EMAIL,user_email));
+                FindIterable<Document> findIterable = MMongo.find(new DB().getProductsCollection(),new Document(C.FIELD.EMAIL,user_email));
+                Iterator<Document> iterator = findIterable.iterator();
+                int count=0;
                 while (iterator.hasNext()) {
                     Document doc  = iterator.next();
+                    String title = doc.getString(C.FIELD.TITLE);
+                    String category = doc.getString(C.FIELD.CATEGORY);
+                    String description = doc.getString(C.FIELD.DESCRIPTION);
+                    String price = doc.getString(C.FIELD.PRICE);
+                    String status = doc.getString(C.FIELD.SOLDFLAG);
+                    ArrayList<String> customersList = (ArrayList<String>) doc.get(C.FIELD.CUSTOMERS);
             %>
             <tr>
-                <td class="text-muted"><%=doc.getString(C.FIELD.TITLE)%></td>
-                <td class="text-muted"><%=doc.getString(C.FIELD.CATEGORY)%></td>
-                <td class="text-muted"><%=doc.getString(C.FIELD.DESCRIPTION)%></td>
-                <td class="text-muted"><%=doc.getString(C.FIELD.PRICE)%></td>
+                <div class="modal fade details" id="myCusModal<%=count%>" tableindex="-1" role="dialog" aria-labelledby="deatils" aria-hidden="true">
+                    <div class="modal-dialog mmodal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title text-center">Customers</h4>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" style="overflow: scroll; height: 50vh;">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <%
+                                            for(String var : customersList) {
+                                            FindIterable<Document> fi = MMongo.find(new DB().getCollection(),new Document(C.FIELD.EMAIL, var));
+                                            Iterator<Document> it = fi.iterator();
+                                            Document docu = new Document();
+                                            if(it.hasNext())
+                                                docu= it.next();
+                                        %>
+
+                                        <div class="col-sm-4">
+                                            <div class="center-block">
+                                                <img src="<%=docu.getString(C.FIELD.IMGURL)%>" class="rounded-circle img-fluid"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <h4><%=docu.getString(C.FIELD.NAME)%></h4>
+                                                Email : <%=docu.getString(C.FIELD.EMAIL)%><br>
+                                                Phn No: <%=docu.getString(C.FIELD.PHONE)%>
+                                            <hr/>
+                                        </div>
+                                        <%}%>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <td class="text-muted"><%=count%></td>
+                <td class="text-muted"><%=title%></td>
+                <td class="text-muted"><%=category%></td>
+                <td class="text-muted"><%=description%></td>
+                <td class="text-muted"><%=price%></td>
+                <td class="text-muted"><a href="#" data-toggle="modal" data-target="#myCusModal<%=count%>"><%=customersList.size()%></a></td>
+                <td class="text-muted">
+                    <%
+                        if(status.equals("false")) {
+                    %>
+                        <form action="removeitemfromlist" method="post">
+                            <input type="hidden" name="id" value="<%=doc.getString(C.FIELD.IMGURL)%>"/>
+                            <button class="btn btn-link" type="submit">REMOVE</button>
+                        </form>
+                    <%
+                        } else {
+                    %>
+                        <button disabled class="btn btn-link" >REMOVE</button>
+                    <%
+                        }
+                    %>
+                </td>
             </tr>
-            <%}%>
+            <%count++;}%>
             </tbody>
         </table>
     </div>
@@ -664,8 +718,6 @@ if(!flag) {
         <!-- /.col-lg-3 -->
 
         <div class="col-lg-9">
-
-
             <div class="row">
                 <%
                     Document fDocument;
@@ -680,29 +732,86 @@ if(!flag) {
                     if(dist == null || dist.equals(""))
                         dist="0";
 
-                    Iterator<Document> iterator = MMongo.find(new DB().getProductsCollection(),fDocument);
-
+                    FindIterable<Document> findIterable = MMongo.find(new DB().getProductsCollection(),fDocument.append(C.FIELD.SOLDFLAG,"false"));
+                    Iterator<Document> iterator = findIterable.iterator();
                     iterator = MMongo.getDistanceIterator(iterator,dist,Double.parseDouble(user_latitude),Double.parseDouble(user_longitude));
 
+                    int count = 0;
                     while(iterator.hasNext()){
                         Document document = iterator.next();
+                        String imgurl = document.getString(C.FIELD.IMGURL);
+                        String title = document.getString(C.FIELD.TITLE);
+                        String price = document.getString(C.FIELD.PRICE);
+                        String description = document.getString(C.FIELD.DESCRIPTION);
+                        String email = document.getString(C.FIELD.EMAIL);
+                        if(email.equals(user_email))
+                            continue;
                 %>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100">
-                        <a href="#"><img class="card-img-top" src="<%=document.getString(C.FIELD.IMGURL)%>" alt="Here I'm"></a>
+                        <a href="#" data-toggle="modal" data-target="#myModal<%=count%>"><img class="card-img-top" src="<%=imgurl%>" alt="Here I'm"></a>
                         <div class="card-body">
                             <h4 class="card-title">
-                                <a href="#"><%=document.getString(C.FIELD.TITLE)%></a>
+                                <a href="#"><%=title%></a>
                             </h4>
-                            <h5>&#8377;<%=document.getString(C.FIELD.PRICE)%></h5>
-                            <p class="card-text"><%=document.getString(C.FIELD.DESCRIPTION)%></p>
+                            <h5>&#8377;<%=price%></h5>
+                            <p class="card-text">
+                                <%
+                                    if(description.length() < 200)
+                                        out.print(description);
+                                    else
+                                        out.print(description.substring(0,200)+"...");
+
+                                %>
+                            </p>
                         </div>
                         <div class="card-footer">
                             <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
                         </div>
                     </div>
                 </div>
-                <%}%>
+                <div class="modal fade details" id="myModal<%=count%>" tableindex="-1" role="dialog" aria-labelledby="deatils" aria-hidden="true">
+                    <div class="modal-dialog mmodal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title text-center"><%=title%></h4>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="center-block">
+                                                <img class="img-thumbnail" src="<%=imgurl%>" alt="jeans" class="details img-responsive" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h4>Details</h4>
+                                            <p>
+                                                <%=description%>
+                                            </p>
+                                            <hr/>
+                                            <p>
+                                                Price: <%=price%>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <form action="senddealrequest" method="post">
+                                    <input type="hidden" name="customer" value="<%=user_email%>"/>
+                                    <input type="hidden" name="id" value="<%=imgurl%>"/>
+                                    <button class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button class="btn btn-warning" type="submit"><span class="glyphicon glyphicon-shopping-cart"></span>I'm Interested</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%count++;}%>
             </div>
         </div>
     </div>

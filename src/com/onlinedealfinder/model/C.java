@@ -56,6 +56,7 @@ public class C {
 		public static final String LONGITUDE = "longitude";
 		public static final String LATITUDE = "latitude";
 		public static final String SOLDFLAG = "soldflag";
+		public static final String CUSTOMERS= "customers";
 	}
 	
 	public static class PASSWORD {

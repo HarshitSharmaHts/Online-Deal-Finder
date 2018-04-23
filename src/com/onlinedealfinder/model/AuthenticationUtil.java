@@ -38,7 +38,7 @@ public class AuthenticationUtil {
 
 		password = generateHash(password);
 		Document document = new Document(C.FIELD.EMAIL,email).append(C.FIELD.PASSWORD,password);
-		Iterator<Document> iterator = MMongo.find(db.getCollection(),document);
+		Iterator<Document> iterator = MMongo.find(db.getCollection(),document).iterator();
 
 		Document user_doc = null;
 
@@ -51,7 +51,7 @@ public class AuthenticationUtil {
 	}
 
 	public static  String getDetailsByEmail(String email) {
-		Iterator<Document> iterator = MMongo.find(db.getCollection(),new Document(C.FIELD.EMAIL,email));
+		Iterator<Document> iterator = MMongo.find(db.getCollection(),new Document(C.FIELD.EMAIL,email)).iterator();
 
 		if(iterator.hasNext()) {
 			return iterator.next().toJson();
@@ -61,7 +61,7 @@ public class AuthenticationUtil {
 
 	public static String loginOAuth(String email) {
 		Document document = new Document(C.FIELD.EMAIL,email);
-		Iterator<Document> iterator = MMongo.find(db.getCollection(),document);
+		Iterator<Document> iterator = MMongo.find(db.getCollection(),document).iterator();
 
 		if (iterator.hasNext()) {
 			return iterator.next().toJson();
