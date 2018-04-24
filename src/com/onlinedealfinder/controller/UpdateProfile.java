@@ -55,6 +55,6 @@ public class UpdateProfile extends HttpServlet {
             }
         }
 
-        response.sendRedirect("index.jsp?editProfile=true");
+        response.sendRedirect("index.jsp?action=edit_profile");
     }
 }

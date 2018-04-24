@@ -11,7 +11,6 @@
 <%@ page import="com.onlinedealfinder.model.DB" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="com.mongodb.client.FindIterable" %>
-<%@ page import="javax.print.Doc" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -338,16 +337,26 @@ if(!flag) {
         </div>
     </div>
 </div>
-
+     <%!
+         String user_name ="";
+         String user_email ="";
+         String user_imgurl ="";
+         String user_phnno ="";
+         String user_longitude ="";
+         String user_latitude ="";
+     %>
 <% } else{
     Document userDetails = Document.parse(valuecookie);
 
-    String user_name = userDetails.getString(C.FIELD.NAME);
-    String user_email = userDetails.getString(C.FIELD.EMAIL);
-    String user_imgurl = userDetails.getString(C.FIELD.IMGURL);
-    String user_phnno = userDetails.getString(C.FIELD.PHONE);
-    String user_longitude = userDetails.getString(C.COOKIE.LONGITUDE_FIELD);
-    String user_latitude = userDetails.getString(C.COOKIE.LATITUDE_FIELD);
+    user_name = userDetails.getString(C.FIELD.NAME);
+    user_email = userDetails.getString(C.FIELD.EMAIL);
+    user_imgurl = userDetails.getString(C.FIELD.IMGURL);
+    user_phnno = userDetails.getString(C.FIELD.PHONE);
+    user_longitude = userDetails.getString(C.COOKIE.LONGITUDE_FIELD);
+    user_latitude = userDetails.getString(C.COOKIE.LATITUDE_FIELD);
+
+    System.out.println("Lon:"+user_longitude);
+    System.out.println("Lat:"+user_latitude);
 
     String action = request.getParameter("action");
 
@@ -359,7 +368,9 @@ if(!flag) {
     user_imgurl = user_imgurl == null?"":user_imgurl;
     user_phnno = user_phnno == null?"":user_phnno;
 %>
-
+<%--<script>--%>
+    <%--alert('<%=user_longitude%>'+'    '+ '<%=user_latitude%>');--%>
+<%--// </script>--%>
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
     <div class="container">
@@ -381,9 +392,9 @@ if(!flag) {
 					  <div class="dropdown-menu">
 
                           <a href="index.jsp?category=<%=C.CATEGORY.ELECTRONICS%>" class="dropdown-item">Electronics</a>
+                          <a href="index.jsp?category=<%=C.CATEGORY.SPORTS%>" class="dropdown-item">Sports</a>
                           <a href="index.jsp?category=<%=C.CATEGORY.HOMEFURNITURE%>" class="dropdown-item">Home & Furniture</a>
-                          <a href="index.jsp?category=<%=C.CATEGORY.TVAPPLIANCES%>" class="dropdown-item">TV & Appliances</a>
-                          <a href="index.jsp?category=<%=C.CATEGORY.SPORTSBOOK%>" class="dropdown-item">Sports & Books</a>
+                          <a href="index.jsp?category=<%=C.CATEGORY.BOOK%>" class="dropdown-item">Books</a>
                           <a href="index.jsp?category=<%=C.CATEGORY.OTHERS%>" class="dropdown-item">Other</a>
 						    <div class="dropdown-divider"></div>
 					  </div>
@@ -428,17 +439,21 @@ if(!flag) {
     <h3>Personal info</h3>
     <%--edit profile--%>
     <div class="row">
-        <form action="imageupload" method="post" class="form-horizontal col-md-4" role="form" enctype="multipart/form-data">
+        <form action="imageupload"  class="form-horizontal col-md-4" method="post" role="form" enctype="multipart/form-data">
 
             <div class="col-md-12 card">
                 <div class="text-center card-body">
                     <img src="<%=user_imgurl%>" class="avatar img-circle" style="width:100px;height:100px;border-radius: 50%;" alt="avatar">
+
                     <h6>Upload a different photo...</h6>
 
                     <div class="form-group">
                         <label class="col-md-6 control-label"></label>
                         <div class="col-md-12">
                             <input type="file" name="image" class="form-control">
+                            <input type="hidden" name="longitude" value="<%=user_longitude%>"/>
+                            <input type="hidden" name="latitude" value="<%=user_latitude%>"/>
+                            <input type="hidden" name="email" value="<%=user_email%>"/>
                             <span></span>
                             <input type="submit" class="btn btn-primary" value="Upload">
                         </div>
@@ -512,9 +527,9 @@ if(!flag) {
                         <div class="ui-select">
                             <select id="user_time_zone" name="category" class="form-control">
                                 <option value="<%=C.CATEGORY.ELECTRONICS%>">Electronics</option>
-                                <option value="<%=C.CATEGORY.TVAPPLIANCES%>">TV & Appliances</option>
                                 <option value="<%=C.CATEGORY.HOMEFURNITURE%>">Home & Furniture</option>
-                                <option value="<%=C.CATEGORY.SPORTSBOOK%>">Sports & Books</option>
+                                <option value="<%=C.CATEGORY.BOOK%>">Books</option>
+                                <option value="<%=C.CATEGORY.SPORTS%>">Sports</option>
                                 <option value="<%=C.CATEGORY.OTHERS%>">Others</option>
                             </select>
                         </div>
@@ -557,14 +572,14 @@ if(!flag) {
                     <td class="text-dark font-weight-bold">Category</td>
                     <td class="text-dark font-weight-bold">Description</td>
                     <td class="text-dark font-weight-bold">Price</td>
-                    <td class="text-dark font-weight-bold">Status</td>
+                    <td class="text-dark font-weight-bold">Interested</td>
                 </tr>
             </thead>
             <tbody>
             <%
                 FindIterable<Document> findIterable = MMongo.find(new DB().getProductsCollection(),new Document(C.FIELD.EMAIL,user_email));
                 Iterator<Document> iterator = findIterable.iterator();
-                int count=0;
+                int count=1;
                 while (iterator.hasNext()) {
                     Document doc  = iterator.next();
                     String title = doc.getString(C.FIELD.TITLE);
@@ -573,6 +588,9 @@ if(!flag) {
                     String price = doc.getString(C.FIELD.PRICE);
                     String status = doc.getString(C.FIELD.SOLDFLAG);
                     ArrayList<String> customersList = (ArrayList<String>) doc.get(C.FIELD.CUSTOMERS);
+                    if(customersList == null) {
+                        customersList =new ArrayList<String>();
+                    }
             %>
             <tr>
                 <div class="modal fade details" id="myCusModal<%=count%>" tableindex="-1" role="dialog" aria-labelledby="deatils" aria-hidden="true">
@@ -586,7 +604,6 @@ if(!flag) {
                             </div>
                             <div class="modal-body" style="overflow: scroll; height: 50vh;">
                                 <div class="container-fluid">
-                                    <div class="row">
                                         <%
                                             for(String var : customersList) {
                                             FindIterable<Document> fi = MMongo.find(new DB().getCollection(),new Document(C.FIELD.EMAIL, var));
@@ -596,19 +613,20 @@ if(!flag) {
                                                 docu= it.next();
                                         %>
 
-                                        <div class="col-sm-4">
-                                            <div class="center-block">
-                                                <img src="<%=docu.getString(C.FIELD.IMGURL)%>" class="rounded-circle img-fluid"/>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <div class="center-block">
+                                                    <img src="<%=docu.getString(C.FIELD.IMGURL)%>" class="rounded-circle img-fluid"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <h4><%=docu.getString(C.FIELD.NAME)%></h4>
+                                                    Email : <%=docu.getString(C.FIELD.EMAIL)%><br>
+                                                    Phn No: <%=docu.getString(C.FIELD.PHONE)%>
                                             </div>
                                         </div>
-                                        <div class="col-sm-8">
-                                            <h4><%=docu.getString(C.FIELD.NAME)%></h4>
-                                                Email : <%=docu.getString(C.FIELD.EMAIL)%><br>
-                                                Phn No: <%=docu.getString(C.FIELD.PHONE)%>
-                                            <hr/>
-                                        </div>
+                                    <hr/>
                                         <%}%>
-                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -654,10 +672,10 @@ if(!flag) {
         </ol>
         <div class="carousel-inner" role="listbox">
             <div class="carousel-item active">
-                <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="images/banner1.jpg" alt="First slide">
+                <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="images/banner1.png" alt="First slide">
             </div>
             <div class="carousel-item">
-                <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="http://placehold.it/900x350" alt="Second slide">
+                <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="images/banner3.jpg" alt="Second slide">
             </div>
             <div class="carousel-item">
                 <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="images/banner2.jpg" alt="Third slide">
@@ -702,12 +720,12 @@ if(!flag) {
                 <div class="well">
                     Filter by distance:
 
-                    <input id="pricelimit" type="range" class="span2" value="" oninput="changValSlider()"
+                    <input id="pricelimit" type="range" class="span2" value="10" oninput="changValSlider()"
                            min="10"
                            max="200"
                            step="10"
                            data-show-value="true"/>
-                    <input type="submit" onclick="redirectTo()"/>
+                    <input type="submit" class="btn btn-dark" value="Do Filter" onclick="redirectTo()"/>
                 </div>
             </div>
             <p>
@@ -734,6 +752,8 @@ if(!flag) {
 
                     FindIterable<Document> findIterable = MMongo.find(new DB().getProductsCollection(),fDocument.append(C.FIELD.SOLDFLAG,"false"));
                     Iterator<Document> iterator = findIterable.iterator();
+                    System.out.println("Lat:"+user_latitude);
+                    System.out.println("Lon:"+user_longitude);
                     iterator = MMongo.getDistanceIterator(iterator,dist,Double.parseDouble(user_latitude),Double.parseDouble(user_longitude));
 
                     int count = 0;
@@ -744,6 +764,9 @@ if(!flag) {
                         String price = document.getString(C.FIELD.PRICE);
                         String description = document.getString(C.FIELD.DESCRIPTION);
                         String email = document.getString(C.FIELD.EMAIL);
+                        double longitude = Double.parseDouble(document.getString(C.FIELD.LONGITUDE));
+                        double latitude = Double.parseDouble(document.getString(C.FIELD.LATITUDE));
+                        int distance = C.calculateDistance(Double.parseDouble(user_latitude),Double.parseDouble(user_longitude),latitude,longitude);
                         if(email.equals(user_email))
                             continue;
                 %>
@@ -786,6 +809,9 @@ if(!flag) {
                                             <div class="center-block">
                                                 <img class="img-thumbnail" src="<%=imgurl%>" alt="jeans" class="details img-responsive" />
                                             </div>
+                                            <p>
+                                                <%=distance%> km far from your location.
+                                            </p>
                                         </div>
                                         <div class="col-sm-6">
                                             <h4>Details</h4>

@@ -39,13 +39,16 @@ public class ImageUpload extends HttpServlet {
             for (int i = 0; i < cookies.length; i++) {
                 String namecookie = cookies[i].getName();
                 if (namecookie.equals(C.COOKIE.LOGIN_COOKIE)) {
-                    cookies[i].setValue(AuthenticationUtil.getDetailsByEmail(document.getString(C.FIELD.EMAIL)));
+                    Document tDocument = Document.parse(AuthenticationUtil.getDetailsByEmail(document.getString(C.FIELD.EMAIL)))
+                            .append(C.COOKIE.LATITUDE_FIELD,document.getString(C.COOKIE.LATITUDE_FIELD))
+                            .append(C.COOKIE.LONGITUDE_FIELD,document.getString(C.COOKIE.LONGITUDE_FIELD));
+                    cookies[i].setValue(tDocument.toJson());
                     response.addCookie(cookies[i]);
                     System.out.println(cookies[i].getValue().toString());
                     break;
                 }
             }
         }
-        response.sendRedirect("index.jsp?editProfile=true");
+        response.sendRedirect("index.jsp?action=edit_profile");
     }
 }

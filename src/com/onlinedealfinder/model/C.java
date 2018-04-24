@@ -76,7 +76,8 @@ public class C {
 		public static final String ELECTRONICS =  "Electronics";
 		public static final String TVAPPLIANCES = "TV_Appliances";
 		public static final String HOMEFURNITURE = "Home_Furniture";
-		public static final String SPORTSBOOK = "Sports_Books";
+		public static final String SPORTS = "Sports";
+		public static final String BOOK = "Books";
 		public static final String OTHERS = "Others";
 	}
 
