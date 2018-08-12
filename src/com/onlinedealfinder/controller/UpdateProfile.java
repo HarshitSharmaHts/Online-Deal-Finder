@@ -39,7 +39,7 @@ public class UpdateProfile extends HttpServlet {
             document.append(C.FIELD.PASSWORD,pass);
         }
 
-        MMongo.update(new DB().getCollection(), Filters.eq(C.FIELD.EMAIL,email),new Document("$set",document));
+        MMongo.update(DB.getInstance().getCollection(), Filters.eq(C.FIELD.EMAIL,email),new Document("$set",document));
 
 
         Cookie[] cookies = request.getCookies();

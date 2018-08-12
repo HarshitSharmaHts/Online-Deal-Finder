@@ -20,7 +20,7 @@ public class SendDealRequest extends HttpServlet {
         String id = request.getParameter("id");
         Document document = new Document("$push",new Document(C.FIELD.CUSTOMERS,customer));
 
-        MMongo.update(new DB().getProductsCollection(), Filters.eq(C.FIELD.IMGURL,id),document);
+        MMongo.update(DB.getInstance().getProductsCollection(), Filters.eq(C.FIELD.IMGURL,id),document);
         response.sendRedirect("index.jsp?msg=");
     }
 }

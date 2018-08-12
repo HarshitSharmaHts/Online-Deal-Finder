@@ -33,37 +33,61 @@
 
     <!-- Custom styles for this template -->
     <link href="css/online-deal-finder.min.css" rel="stylesheet">
-	<script src="https://apis.google.com/js/platform.js" async defer></script>
-	<meta name="google-signin-client_id" content="494081324513-l3br43frqkrjet8aeq6u0eq1avmou01b.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="494081324513-l3br43frqkrjet8aeq6u0eq1avmou01b.apps.googleusercontent.com">
+    <script>
+        var longi;
+        var latit;
+        (function() {
+                if ("geolocation" in navigator){
+                    navigator.geolocation.getCurrentPosition(function(position){
+                        latit = position.coords.longitude;;
+                        longi = position.coords.latitude;;
+                        document.getElementById('latit').value = latit;
+                        document.getElementById('longi').value = longi;
+                    });
+                }else {
+                    alert("Geolocation is not supported by this browser.");
+                }
+            }
+        )();
+        function validateForm() {
+            var x = document.forms["loginForm"]["longitude"].value;
+            var y = document.forms["loginForm"]["latitude"].value;
+
+            if (x==""||y==""||x==undefined||y==undefined) {
+                alert("");
+                return false;
+            }
+        }
+    </script>
 </head>
 <body>
 
 <%
-boolean flag = false;
-String valuecookie="";
-Cookie[] cookies = request.getCookies();
-
-if (cookies != null) {
-	for (int i = 0; i < cookies.length; i++) {
-		String namecookie = cookies[i].getName();
-		valuecookie = cookies[i].getValue();
-		if (namecookie.equals(C.COOKIE.LOGIN_COOKIE)) {
-			cookies[i].setMaxAge(3*60*60);
-			response.addCookie(cookies[i]);	
-			flag=true;
-			break;
-		}
-		if (i == (cookies.length - 1))
-		{
-			flag = false;
-			break;
-		}
-	}
-} else {
-	flag = false;
-}
-
-if(!flag) {
+    boolean flag = false;
+    String valuecookie="";
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+        for (int i = 0; i < cookies.length; i++) {
+            String namecookie = cookies[i].getName();
+            valuecookie = cookies[i].getValue();
+            if (namecookie.equals(C.COOKIE.LOGIN_COOKIE)) {
+                cookies[i].setMaxAge(3*60*60);
+                response.addCookie(cookies[i]);
+                flag=true;
+                break;
+            }
+            if (i == (cookies.length - 1))
+            {
+                flag = false;
+                break;
+            }
+        }
+    } else {
+        flag = false;
+    }
+    if(!flag) {
 %>
 
 <!-- Navigation -->
@@ -74,18 +98,18 @@ if(!flag) {
                 aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
+
         <div class="collapse navbar-collapse" id="navbarResponsive">
-        	<!-- ul class="navbar-nav mr-auto">
-        	<li class="nav-item">
-            	<form class="form-inline my-2 my-lg-0" id="search-bar-custom">
-			      <input id="srch-area" class="form-control" type="text" placeholder="Search">
-			      <button class="btn btn-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
-		  		</form>
-		  		</li>
-        	</ul -->
+            <!-- ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <form class="form-inline my-2 my-lg-0" id="search-bar-custom">
+                  <input id="srch-area" class="form-control" type="text" placeholder="Search">
+                  <button class="btn btn-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+                  </form>
+                  </li>
+            </ul -->
             <ul class="navbar-nav ml-auto">
-            	
+
                 <li class="nav-item">
                     <a class="nav-link"  data-toggle="modal" data-target="#myModal" href="#">Login <span class="amp">&amp;</span> Signup</a>
                 </li>
@@ -108,52 +132,34 @@ if(!flag) {
     <div class="bg-circle-4 bg-circle"></div>
 </header>
 <img id="myImg"><br>
-<p id="name"></p> 
+<p id="name"></p>
 
-  
+
 <div id="status">
 
 
 </div>
 <script>
+    function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        var imagurl=profile.getImageUrl();
+        var name=profile.getName();
+        var email=profile.getEmail();
+        gapi.auth2.getAuthInstance().disconnect();
 
-    var longi;
-    var latit;
-    (function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.watchPosition(function(position) {
-                    longi = position.coords.longitude;
-                    latit = position.coords.latitude;
-                    document.getElementById('latit').value = latit;
-                    document.getElementById('longi').value = longi;
+        var redirectUrl = 'loginOAuth';
+        //using jquery to post data dynamically
+        var form = $('<form action="' + redirectUrl + '" method="post">' +
+            '<input type="text" name="u_name" value="' + name + '" />' +
+            '<input type="text" name="u_email" value="' + email + '" />' +
+            '<input type="text" name="u_imgurl" value="' + imagurl + '" />' +
+            '<input type="hidden" name="u_longi" value="' + longi + '" />' +
+            '<input type="hidden" name="u_lati" value="' + latit + '" />' +
+            '</form>');
+        $('body').append(form);
+        form.submit();
+    }
 
-                });
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
-        }
-    )();
-			function onSignIn(googleUser) {
-
-				  var profile = googleUser.getBasicProfile();
-				  var imagurl=profile.getImageUrl();
-				  var name=profile.getName();
-				  var email=profile.getEmail();
-
-				  gapi.auth2.getAuthInstance().disconnect();
-				  
-			      var redirectUrl = 'loginOAuth';
-			      //using jquery to post data dynamically
-			      var form = $('<form action="' + redirectUrl + '" method="post">' +
-			                          '<input type="text" name="u_name" value="' + name + '" />' +
-			                          '<input type="text" name="u_email" value="' + email + '" />' +
-			                          '<input type="text" name="u_imgurl" value="' + imagurl + '" />' +
-                                      '<input type="hidden" name="u_longi" value="' + longi + '" />' +
-                                      '<input type="hidden" name="u_lati" value="' + latit + '" />' +
-			                   '</form>');
-			    $('body').append(form);
-			    form.submit();
-			 }
 </script>
 <section>
     <div class="container">
@@ -216,15 +222,15 @@ if(!flag) {
 </section>
 <!-- Large modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-    aria-hidden="true">
+     aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                
+
                 <h4 class="modal-title" id="myModalLabel">Login/Registration</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                     ×
-                    </button>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -232,86 +238,86 @@ if(!flag) {
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs">
                             <li class="nav-item">
-                            	<a class="nav-link active" href="#Login" data-toggle="tab">Login</a>
+                                <a class="nav-link active" href="#Login" data-toggle="tab">Login</a>
                             </li>
                             <li class="nav-item">
-                            	<a class="nav-link" href="#Registration" data-toggle="tab">Registration</a>
+                                <a class="nav-link" href="#Registration" data-toggle="tab">Registration</a>
                             </li>
                         </ul>
                         <!-- Tab panes -->
                         <div class="tab-content">
-                          <div class="tab-pane active" id="Login">
-                                <form role="form" action="login" method="post"  class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="email" class="col-sm-2 control-label">
-                                        Email</label>
-                                    	<div class="col-sm-10">
-											<input type="email" name="form-email" aria-describedby="emailHelp" placeholder="Email..." class="form-email form-control" id="form-email" required="">
-										</div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="exampleInputPassword1" class="col-sm-2 control-label">
-                                        Password</label>
-                                    <div class="col-sm-10">
-										<input type="password" name="form-password" placeholder="Password..." class="form-password form-control" id="form-password" required="">
-									</div>
-									
-                                </div>
+                            <div class="tab-pane active" id="Login">
+                                <form name="loginForm" role="form" action="login" method="post"  class="form-horizontal" onsubmit="return validateForm()">
+                                    <div class="form-group">
+                                        <label for="email" class="col-sm-2 control-label">
+                                            Email</label>
+                                        <div class="col-sm-10">
+                                            <input type="email" name="form-email" aria-describedby="emailHelp" placeholder="Email..." class="form-email form-control" id="form-email" required="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1" class="col-sm-2 control-label">
+                                            Password</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" name="form-password" placeholder="Password..." class="form-password form-control" id="form-password" required="">
+                                        </div>
+
+                                    </div>
                                     <input type="hidden" name="longitude" value="" id="longi"/>
                                     <input type="hidden" name="latitude" value="" id="latit"/>
 
                                     <div class="row">
-                                    <div class="col-sm-2">
+                                        <div class="col-sm-2">
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <button type="submit" class="btn btn-primary btn-sm mr-4">
+                                                Submit</button>
+                                            <a href="javascript:;">Forgot your password?</a>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-10">
-                                        <button type="submit" class="btn btn-primary btn-sm mr-4">
-                                            Submit</button>
-                                        <a href="javascript:;">Forgot your password?</a>
-                                    </div>
-                                </div>
                                 </form>
                             </div>
-                            
-                            
+
+
                             <div class="tab-pane" id="Registration">
-                             <form role="form" action="signup" method="post"  class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="email" class="col-sm-2 control-label">
-                                        Name</label>
-                                    <div class="col-sm-10">
-                                         <input type="text" name="form-first-name" placeholder="Full name..." class="form-first-name form-control" id="form-full-name" required="">
+                                <form role="form" action="signup" method="post"  class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="email" class="col-sm-2 control-label">
+                                            Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="form-first-name" placeholder="Full name..." class="form-first-name form-control" id="form-full-name" required="">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email" class="col-sm-2 control-label">
-                                        Email</label>
-                                    <div class="col-sm-10">
-                                        <input type="email" name="form-email" aria-describedby="emailHelp" placeholder="Email..." class="form-email form-control" id="form-email" required="">
+                                    <div class="form-group">
+                                        <label for="email" class="col-sm-2 control-label">
+                                            Email</label>
+                                        <div class="col-sm-10">
+                                            <input type="email" name="form-email" aria-describedby="emailHelp" placeholder="Email..." class="form-email form-control" id="form-email" required="">
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- div class="form-group">
-                                    <label for="mobile" class="col-sm-2 control-label">
-                                        Mobile</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" name="form-number" class="form-control" id="mobile" placeholder="Mobile" />
+                                    <!-- div class="form-group">
+                                        <label for="mobile" class="col-sm-2 control-label">
+                                            Mobile</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" name="form-number" class="form-control" id="mobile" placeholder="Mobile" />
+                                        </div>
+                                    </div-->
+                                    <div class="form-group">
+                                        <label for="password" class="col-sm-2 control-label">
+                                            Password</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" name="form-password" placeholder="Password..." class="form-last-name form-control" id="form-password">
+                                        </div>
                                     </div>
-                                </div-->
-                                <div class="form-group">
-                                    <label for="password" class="col-sm-2 control-label">
-                                        Password</label>
-                                    <div class="col-sm-10">
-                                        <input type="password" name="form-password" placeholder="Password..." class="form-last-name form-control" id="form-password">
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                Sign Up
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-2">
-                                    </div>
-                                    <div class="col-sm-10">
-                                        <button type="submit" class="btn btn-primary btn-sm">
-                                            Sign Up
-                                        </button>
-                                    </div>
-                                </div>
                                 </form>
                             </div>
                         </div>
@@ -337,39 +343,34 @@ if(!flag) {
         </div>
     </div>
 </div>
-     <%!
-         String user_name ="";
-         String user_email ="";
-         String user_imgurl ="";
-         String user_phnno ="";
-         String user_longitude ="";
-         String user_latitude ="";
-     %>
+<%!
+    String user_name ="";
+    String user_email ="";
+    String user_imgurl ="";
+    String user_phnno ="";
+    String user_longitude ="";
+    String user_latitude ="";
+%>
 <% } else{
     Document userDetails = Document.parse(valuecookie);
-
     user_name = userDetails.getString(C.FIELD.NAME);
     user_email = userDetails.getString(C.FIELD.EMAIL);
     user_imgurl = userDetails.getString(C.FIELD.IMGURL);
     user_phnno = userDetails.getString(C.FIELD.PHONE);
     user_longitude = userDetails.getString(C.COOKIE.LONGITUDE_FIELD);
     user_latitude = userDetails.getString(C.COOKIE.LATITUDE_FIELD);
-
-    System.out.println("Lon:"+user_longitude);
-    System.out.println("Lat:"+user_latitude);
-
+//    System.out.println(">>>Lon:"+user_longitude);
+//    System.out.println(">>>Lat:"+user_latitude);
     String action = request.getParameter("action");
-
     if(action == null)
         action="";
-
     user_email = user_email == null?"":user_email;
     user_name = user_name == null?"":user_name;
     user_imgurl = user_imgurl == null?"":user_imgurl;
     user_phnno = user_phnno == null?"":user_phnno;
 %>
 <%--<script>--%>
-    <%--alert('<%=user_longitude%>'+'    '+ '<%=user_latitude%>');--%>
+<%--alert('<%=user_longitude%>'+'    '+ '<%=user_latitude%>');--%>
 <%--// </script>--%>
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
@@ -379,47 +380,47 @@ if(!flag) {
                 aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-        	<ul class="navbar-nav mr-auto">
-        	<li class="nav-item">
-            	<form class="form-inline my-2 my-lg-0" id="search-bar-custom">
-            		<div class="btn-group">
-					  <button type="button" class="btn btn-primary">Filter</button>
-					  <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split filter-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						    <span class="sr-only">Toggle Dropdown</span>
-					  </button>
-					  <div class="dropdown-menu">
 
-                          <a href="index.jsp?category=<%=C.CATEGORY.ELECTRONICS%>" class="dropdown-item">Electronics</a>
-                          <a href="index.jsp?category=<%=C.CATEGORY.SPORTS%>" class="dropdown-item">Sports</a>
-                          <a href="index.jsp?category=<%=C.CATEGORY.HOMEFURNITURE%>" class="dropdown-item">Home & Furniture</a>
-                          <a href="index.jsp?category=<%=C.CATEGORY.BOOK%>" class="dropdown-item">Books</a>
-                          <a href="index.jsp?category=<%=C.CATEGORY.OTHERS%>" class="dropdown-item">Other</a>
-						    <div class="dropdown-divider"></div>
-					  </div>
-					</div>
-			      <input id="srch-area" class="form-control" type="text" placeholder="Search">
-			      <button class="btn btn-primary my-2 my-sm-0 srch-button" type="submit"><i class="fa fa-search"></i></button>
-		  		</form>
-		  		</li>
-        	</ul>
-            <ul class="navbar-nav ml-auto">
-            	<li class="nav-item">
-                    <div class="btn-group">
-                          <button type="button" class="btn btn-primary"><%=user_name%></button>
-                          <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split filter-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <form class="form-inline my-2 my-lg-0" id="search-bar-custom">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary">Filter</button>
+                            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split filter-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="sr-only">Toggle Dropdown</span>
-                          </button>
-                          <div class="dropdown-menu">
-                                <a class="dropdown-item" href="index.jsp?action=edit_profile">Your Profile</a>
-                                <a class="dropdown-item" href="index.jsp?action=sell_item">Sell</a>
-                                <a class="dropdown-item" href="index.jsp?action=user_history">History</a>
-                                <a class="dropdown-item" href="logout">Logout</a>
+                            </button>
+                            <div class="dropdown-menu">
+
+                                <a href="index.jsp?category=<%=C.CATEGORY.ELECTRONICS%>" class="dropdown-item">Electronics</a>
+                                <a href="index.jsp?category=<%=C.CATEGORY.SPORTS%>" class="dropdown-item">Sports</a>
+                                <a href="index.jsp?category=<%=C.CATEGORY.HOMEFURNITURE%>" class="dropdown-item">Home & Furniture</a>
+                                <a href="index.jsp?category=<%=C.CATEGORY.BOOK%>" class="dropdown-item">Books</a>
+                                <a href="index.jsp?category=<%=C.CATEGORY.OTHERS%>" class="dropdown-item">Other</a>
                                 <div class="dropdown-divider"></div>
-                          </div>
+                            </div>
+                        </div>
+                        <input id="srch-area" class="form-control" type="text" placeholder="Search">
+                        <button class="btn btn-primary my-2 my-sm-0 srch-button" type="submit"><i class="fa fa-search"></i></button>
+                    </form>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary"><%=user_name%></button>
+                        <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split filter-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="index.jsp?action=edit_profile">Your Profile</a>
+                            <a class="dropdown-item" href="index.jsp?action=sell_item">Sell</a>
+                            <a class="dropdown-item" href="index.jsp?action=user_history">History</a>
+                            <a class="dropdown-item" href="logout">Logout</a>
+                            <div class="dropdown-divider"></div>
+                        </div>
                     </div>
-            	</li>
+                </li>
             </ul>
         </div>
     </div>
@@ -503,7 +504,7 @@ if(!flag) {
     </div>
 </div>
 <hr>
-    <%}else if(action.equals("sell_item")) {%>
+<%}else if(action.equals("sell_item")) {%>
 <div class="container">
     <h1>Edit Profile</h1><hr>
     <div class="personal-info">
@@ -566,18 +567,18 @@ if(!flag) {
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
             <thead>
-                <tr>
-                    <td class="text-dark font-weight-bold">#</td>
-                    <td class="text-dark font-weight-bold">Title</td>
-                    <td class="text-dark font-weight-bold">Category</td>
-                    <td class="text-dark font-weight-bold">Description</td>
-                    <td class="text-dark font-weight-bold">Price</td>
-                    <td class="text-dark font-weight-bold">Interested</td>
-                </tr>
+            <tr>
+                <td class="text-dark font-weight-bold">#</td>
+                <td class="text-dark font-weight-bold">Title</td>
+                <td class="text-dark font-weight-bold">Category</td>
+                <td class="text-dark font-weight-bold">Description</td>
+                <td class="text-dark font-weight-bold">Price</td>
+                <td class="text-dark font-weight-bold">Interested</td>
+            </tr>
             </thead>
             <tbody>
             <%
-                FindIterable<Document> findIterable = MMongo.find(new DB().getProductsCollection(),new Document(C.FIELD.EMAIL,user_email));
+                FindIterable<Document> findIterable = MMongo.find(DB.getInstance().getProductsCollection(),new Document(C.FIELD.EMAIL,user_email));
                 Iterator<Document> iterator = findIterable.iterator();
                 int count=1;
                 while (iterator.hasNext()) {
@@ -604,29 +605,29 @@ if(!flag) {
                             </div>
                             <div class="modal-body" style="overflow: scroll; height: 50vh;">
                                 <div class="container-fluid">
-                                        <%
-                                            for(String var : customersList) {
-                                            FindIterable<Document> fi = MMongo.find(new DB().getCollection(),new Document(C.FIELD.EMAIL, var));
+                                    <%
+                                        for(String var : customersList) {
+                                            FindIterable<Document> fi = MMongo.find(DB.getInstance().getCollection(),new Document(C.FIELD.EMAIL, var));
                                             Iterator<Document> it = fi.iterator();
                                             Document docu = new Document();
                                             if(it.hasNext())
                                                 docu= it.next();
-                                        %>
+                                    %>
 
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <div class="center-block">
-                                                    <img src="<%=docu.getString(C.FIELD.IMGURL)%>" class="rounded-circle img-fluid"/>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-9">
-                                                <h4><%=docu.getString(C.FIELD.NAME)%></h4>
-                                                    Email : <%=docu.getString(C.FIELD.EMAIL)%><br>
-                                                    Phn No: <%=docu.getString(C.FIELD.PHONE)%>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <div class="center-block">
+                                                <img src="<%=docu.getString(C.FIELD.IMGURL)%>" class="rounded-circle img-fluid"/>
                                             </div>
                                         </div>
+                                        <div class="col-sm-9">
+                                            <h4><%=docu.getString(C.FIELD.NAME)%></h4>
+                                            Email : <%=docu.getString(C.FIELD.EMAIL)%><br>
+                                            Phn No: <%=docu.getString(C.FIELD.PHONE)%>
+                                        </div>
+                                    </div>
                                     <hr/>
-                                        <%}%>
+                                    <%}%>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -644,14 +645,14 @@ if(!flag) {
                     <%
                         if(status.equals("false")) {
                     %>
-                        <form action="removeitemfromlist" method="post">
-                            <input type="hidden" name="id" value="<%=doc.getString(C.FIELD.IMGURL)%>"/>
-                            <button class="btn btn-link" type="submit">REMOVE</button>
-                        </form>
+                    <form action="removeitemfromlist" method="post">
+                        <input type="hidden" name="id" value="<%=doc.getString(C.FIELD.IMGURL)%>"/>
+                        <button class="btn btn-link" type="submit">REMOVE</button>
+                    </form>
                     <%
-                        } else {
+                    } else {
                     %>
-                        <button disabled class="btn btn-link" >REMOVE</button>
+                    <button disabled class="btn btn-link" >REMOVE</button>
                     <%
                         }
                     %>
@@ -672,13 +673,13 @@ if(!flag) {
         </ol>
         <div class="carousel-inner" role="listbox">
             <div class="carousel-item active">
-                <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="images/banner1.png" alt="First slide">
+                <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="https://s3.amazonaws.com/onlinedealfinder/banner1.png" alt="First slide">
             </div>
             <div class="carousel-item">
-                <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="images/banner3.jpg" alt="Second slide">
+                <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="https://s3.amazonaws.com/onlinedealfinder/banner3.jpg" alt="Second slide">
             </div>
             <div class="carousel-item">
-                <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="images/banner2.jpg" alt="Third slide">
+                <img class="d-block img-fluid" style="width:100%;margin:0px;height:50vh;" src="https://s3.amazonaws.com/onlinedealfinder/banner2.jpg" alt="Third slide">
             </div>
         </div>
         <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -693,26 +694,26 @@ if(!flag) {
 </header>
 
 <div class="container">
-<script>
-    function changValSlider () {
-        document.getElementById('output').innerHTML = document.getElementById('pricelimit').value;
-    }
-    function gup( name, url ) {
-        if (!url) url = location.href;
-        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-        var regexS = "[\\?&]"+name+"=([^&#]*)";
-        var regex = new RegExp( regexS );
-        var results = regex.exec( url );
-        return results == null ? null : results[1];
-    }
-    function redirectTo() {
-        var pa = gup('category',window.location.href);
-        if(pa != null)
-            window.location = "index.jsp?category="+ pa+ "&dist="+document.getElementById('pricelimit').value;
-        else
-            window.location = "index.jsp?dist="+document.getElementById('pricelimit').value;
-    }
-</script>
+    <script>
+        function changValSlider () {
+            document.getElementById('output').innerHTML = document.getElementById('pricelimit').value;
+        }
+        function gup( name, url ) {
+            if (!url) url = location.href;
+            name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+            var regexS = "[\\?&]"+name+"=([^&#]*)";
+            var regex = new RegExp( regexS );
+            var results = regex.exec( url );
+            return results == null ? null : results[1];
+        }
+        function redirectTo() {
+            var pa = gup('category',window.location.href);
+            if(pa != null)
+                window.location = "index.jsp?category="+ pa+ "&dist="+document.getElementById('pricelimit').value;
+            else
+                window.location = "index.jsp?dist="+document.getElementById('pricelimit').value;
+        }
+    </script>
     <div class="row">
         <div class="col-lg-3">
             <h1 class="my-4">Shop Name</h1>
@@ -741,21 +742,15 @@ if(!flag) {
                     Document fDocument;
                     String category = request.getParameter("category");
                     String dist = request.getParameter("dist");
-
                     if(category == null || category.equals(""))
                         fDocument=new Document();
                     else
                         fDocument = new Document(C.FIELD.CATEGORY,category);
-
                     if(dist == null || dist.equals(""))
                         dist="0";
-
-                    FindIterable<Document> findIterable = MMongo.find(new DB().getProductsCollection(),fDocument.append(C.FIELD.SOLDFLAG,"false"));
+                    FindIterable<Document> findIterable = MMongo.find(DB.getInstance().getProductsCollection(),fDocument.append(C.FIELD.SOLDFLAG,"false"));
                     Iterator<Document> iterator = findIterable.iterator();
-                    System.out.println("Lat:"+user_latitude);
-                    System.out.println("Lon:"+user_longitude);
                     iterator = MMongo.getDistanceIterator(iterator,dist,Double.parseDouble(user_latitude),Double.parseDouble(user_longitude));
-
                     int count = 0;
                     while(iterator.hasNext()){
                         Document document = iterator.next();
@@ -784,7 +779,6 @@ if(!flag) {
                                         out.print(description);
                                     else
                                         out.print(description.substring(0,200)+"...");
-
                                 %>
                             </p>
                         </div>
@@ -853,12 +847,12 @@ if(!flag) {
     <!-- /.container -->
 </footer>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-	
-	<script>
-	$('#myModal').modal('show');
-	</script>
+<!-- Bootstrap core JavaScript -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $('#myModal').modal('show');
+</script>
 </body>
 </html>

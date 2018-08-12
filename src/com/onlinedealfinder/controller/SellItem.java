@@ -12,52 +12,56 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.List;
 
 @WebServlet("/sellitem")
 @MultipartConfig
 public class SellItem extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        PrintWriter out = response.getWriter();
+        String title = "";
+        String category = "";
+        String price = "";
+        String description = "";
+        String email = "";
+        String longitude = "";
+        String latitude = "";
+        String photoUrl="";
 
-        Part titlePart = request.getPart("title");
-        String title = InputStreamProcessor.getString(titlePart.getInputStream());
-
-
-        Part categoryPart = request.getPart("category");
-        String category = InputStreamProcessor.getString(categoryPart.getInputStream());
-
-        Part pricePart = request.getPart("price");
-        String price = InputStreamProcessor.getString(pricePart.getInputStream());
-
-        Part descriptionPart = request.getPart("description");
-        String description = InputStreamProcessor.getString(descriptionPart.getInputStream());
-
-        Part emailPart = request.getPart("email");
-        String email = InputStreamProcessor.getString(emailPart.getInputStream());
-
-        Part longitudePart = request.getPart("longitude");
-        String longitude = InputStreamProcessor.getString(longitudePart.getInputStream());
-
-        Part latitudePart = request.getPart("latitude");
-        String latitude = InputStreamProcessor.getString(latitudePart.getInputStream());
-
-        Part photoPart = request.getPart("photo");
-        String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date())+"_"+email+"."+photoPart.getContentType().split("/")[1];
-        FileOutputStream os = new FileOutputStream (C.IMAGE.STORE_PATH +File.separator+timeStamp);
-        InputStream is = photoPart.getInputStream();
-        int ch = is.read();
-        while (ch != -1) {
-            os.write(ch);
-            ch = is.read();
+        if(ServletFileUpload.isMultipartContent(request)) {
+            try {
+                String fname = null;
+                List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+                for(FileItem item : multiparts){
+                    if(!item.isFormField()) {
+                        photoUrl = AmazonClient.getInstance().uploadFile(item);
+                    } else {
+                        if(item.getFieldName().equals("title"))
+                            title = new String(item.get());
+                        if(item.getFieldName().equals("category"))
+                            category = new String(item.get());
+                        if(item.getFieldName().equals("price"))
+                            price = new String(item.get());
+                        if(item.getFieldName().equals("description"))
+                            description = new String(item.get());
+                        if(item.getFieldName().equals("email"))
+                            email = new String(item.get());
+                        if(item.getFieldName().equals("longitude"))
+                            longitude = new String(item.get());
+                        if(item.getFieldName().equals("latitude"))
+                            latitude = new String(item.get());
+                    }
+                }
+                System.out.println("TRY");
+            } catch (Exception ex) {
+                System.out.println("CATCH");
+            }
+        }else{
+            System.out.println("ELSE");
         }
-        os.close();
 
-        Document document = new Document(C.FIELD.IMGURL,"images/"+timeStamp)
+        Document document = new Document(C.FIELD.IMGURL,photoUrl)
                 .append(C.FIELD.EMAIL,email)
                 .append(C.FIELD.TITLE,title)
                 .append(C.FIELD.PRICE,price)
@@ -67,7 +71,7 @@ public class SellItem extends HttpServlet {
                 .append(C.FIELD.LATITUDE,latitude)
                 .append(C.FIELD.SOLDFLAG,"false");
 
-        MMongo.insert(new DB().getProductsCollection(),document);
+        MMongo.insert(DB.getInstance().getProductsCollection(),document);
 
         response.sendRedirect("index.jsp");
 

@@ -9,7 +9,6 @@ import java.util.Iterator;
 
 public class AuthenticationUtil {
 
-	private static DB db = new DB();
 
 	public static String generateHash(String input) {
 		
@@ -38,7 +37,7 @@ public class AuthenticationUtil {
 
 		password = generateHash(password);
 		Document document = new Document(C.FIELD.EMAIL,email).append(C.FIELD.PASSWORD,password);
-		Iterator<Document> iterator = MMongo.find(db.getCollection(),document).iterator();
+		Iterator<Document> iterator = MMongo.find(DB.getInstance().getCollection(),document).iterator();
 
 		Document user_doc = null;
 
@@ -51,7 +50,7 @@ public class AuthenticationUtil {
 	}
 
 	public static  String getDetailsByEmail(String email) {
-		Iterator<Document> iterator = MMongo.find(db.getCollection(),new Document(C.FIELD.EMAIL,email)).iterator();
+		Iterator<Document> iterator = MMongo.find(DB.getInstance().getCollection(),new Document(C.FIELD.EMAIL,email)).iterator();
 
 		if(iterator.hasNext()) {
 			return iterator.next().toJson();
@@ -61,7 +60,7 @@ public class AuthenticationUtil {
 
 	public static String loginOAuth(String email) {
 		Document document = new Document(C.FIELD.EMAIL,email);
-		Iterator<Document> iterator = MMongo.find(db.getCollection(),document).iterator();
+		Iterator<Document> iterator = MMongo.find(DB.getInstance().getCollection(),document).iterator();
 
 		if (iterator.hasNext()) {
 			return iterator.next().toJson();
@@ -85,7 +84,7 @@ public class AuthenticationUtil {
 				document = document.append(C.FIELD.IMGURL,"images/default.jpeg");
 			}
 
-			MMongo.insert(db.getCollection(),document);
+			MMongo.insert(DB.getInstance().getCollection(),document);
 
 			return true;
 		}

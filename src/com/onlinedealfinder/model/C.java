@@ -24,7 +24,7 @@ public class C {
 	public static class MONGO {
 		public static final String HOST_NAME = "localhost";
 		public static final int PORT_NUMBER = 27017;
-		public static final String DATABASE_NAME = "onlineDealFinderDatabase";
+		public static final String DATABASE_NAME = "test";
 		public static final String USER_COLLECTION = "user_details";
 		public static final String PRODUCTS_COLLECTION = "products";
 	}
@@ -96,4 +96,10 @@ public class C {
 
         return (int) (Math.round(AVERAGE_RADIUS_OF_EARTH_KM * c));
     }
+
+	public static class AWS {
+		public static final String BUCKET = "onlinedealfinder";
+		public static final String END_POINT_URL = "https://s3.amazonaws.com";
+		public static final String DEFAULT_DP = "https://s3.amazonaws.com/onlinedealfinder/default.jpeg";
+	}
 }

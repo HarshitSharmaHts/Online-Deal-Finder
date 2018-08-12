@@ -15,7 +15,7 @@ import java.io.IOException;
 @WebServlet("/imageupload")
 public class ImageUpload extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String imgurl = FileHandler.upload(C.IMAGE.STORE_PATH,request);
+        String imgurl = FileHandler.upload(request);
 
         String str = "";
 
@@ -34,7 +34,7 @@ public class ImageUpload extends HttpServlet {
         System.out.println("COOKIE : " + str);
         Document document = Document.parse(str);
 
-        MMongo.update(new DB().getCollection(), Filters.eq(C.FIELD.EMAIL,document.getString(C.FIELD.EMAIL)),new Document("$set",new Document(C.FIELD.IMGURL,imgurl)));
+        MMongo.update(DB.getInstance().getCollection(), Filters.eq(C.FIELD.EMAIL,document.getString(C.FIELD.EMAIL)),new Document("$set",new Document(C.FIELD.IMGURL,imgurl)));
         if (cookies != null) {
             for (int i = 0; i < cookies.length; i++) {
                 String namecookie = cookies[i].getName();

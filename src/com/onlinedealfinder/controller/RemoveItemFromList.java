@@ -17,7 +17,7 @@ import java.io.IOException;
 public class RemoveItemFromList extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
-        MMongo.update(new DB().getProductsCollection(), Filters.eq(C.FIELD.IMGURL,id), new Document("$set",new Document(C.FIELD.SOLDFLAG,"true")));
+        MMongo.update(DB.getInstance().getProductsCollection(), Filters.eq(C.FIELD.IMGURL,id), new Document("$set",new Document(C.FIELD.SOLDFLAG,"true")));
 
         response.sendRedirect("index.jsp?history=true");
     }

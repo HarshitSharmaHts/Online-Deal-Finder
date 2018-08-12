@@ -1,15 +1,25 @@
 package com.onlinedealfinder.model;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 
 public class DB {
 
-    private MongoClient client;
+    private static DB instance;
+    private static MongoClient client;
 
-    public DB() {
-        client = new MongoClient(C.MONGO.HOST_NAME,C.MONGO.PORT_NUMBER);
+    private DB() {
+
+        MongoClientURI mongoClientURI = new MongoClientURI("mongodb://harshitsharmahts:zZ1sOiT8Ay3JkDhO@cluster0-shard-00-00-cvn8z.mongodb.net:27017,cluster0-shard-00-01-cvn8z.mongodb.net:27017,cluster0-shard-00-02-cvn8z.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true\n");
+        client = new MongoClient(mongoClientURI);
+    }
+
+    public static DB getInstance() {
+        if(instance==null)
+            instance = new DB();
+        return instance;
     }
 
     public MongoClient getClient() {
