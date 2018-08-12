@@ -21,7 +21,7 @@ public class AmazonClient {
     private AmazonS3 s3client;
 
     private AmazonClient() {
-        BasicAWSCredentials credentials = new BasicAWSCredentials("AKIAJVYAHDVJUVYG5FYA", "E/TFtQ/9TDBU4ZUiKJNlFOQ4ngF8MVk2eCP7OF48");
+        BasicAWSCredentials credentials = new BasicAWSCredentials("ACCESS_KEY", "SECRET_KEY");
         s3client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
     }
 
